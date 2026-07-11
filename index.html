@@ -21,12 +21,19 @@
   <!-- Main Camera Handheld Housing -->
   <main class="camera-body">
     
-    <!-- Camera Top Panel (Grip, Brand, Power LED) -->
+    <!-- Camera Top Panel (Grip, Brand, Power LED, Sub LCD) -->
     <header class="camera-top-bar">
       <div class="brand-panel">
         <span class="brand-name">VICE</span>
         <span class="brand-model">POLY</span>
       </div>
+      
+      <!-- Physical casing LCD window showing battery and date -->
+      <div class="camera-sub-lcd">
+        <span class="sub-lcd-item date-casing">11.07.01</span>
+        <span class="sub-lcd-item battery-casing">▰▰▰</span>
+      </div>
+
       <div class="status-led-group">
         <div class="status-led-item">
           <div class="led led-power glowing"></div>
@@ -48,8 +55,7 @@
         
         <!-- Retro Camera LCD HUD Overlays -->
         <div class="lcd-hud lcd-hud-top">
-          <span class="hud-item mode-label">● 3D-CAM</span>
-          <span class="hud-item battery-label">[▰▰▰] 100%</span>
+          <span class="hud-item mode-label">● ACTIVE</span>
         </div>
 
         <div class="lcd-hud-center">
@@ -61,7 +67,6 @@
         </div>
 
         <div class="lcd-hud lcd-hud-bottom">
-          <span id="lcd-timestamp" class="hud-item time-label">JUL.11.1986</span>
           <span class="hud-item quality-label">HQ 24b</span>
         </div>
 
@@ -74,7 +79,6 @@
           
           <div class="upload-buttons">
             <button id="upload-btn-fallback" class="btn btn-shutter-alt" onclick="document.getElementById('file-input').click()">📂 SELECT IMAGE</button>
-            <button id="camera-btn-fallback" class="btn btn-metal-alt" onclick="document.getElementById('camera-input').click()">📸 TAKE PHOTO</button>
           </div>
         </div>
 
@@ -86,41 +90,30 @@
       </div>
     </section>
 
-    <!-- Camera Physical Controls Panel (Skeuomorphic tactile buttons) -->
+    <!-- Camera Physical Controls Panel (3-button layout) -->
     <footer class="camera-controls-panel">
-      <!-- Left utility buttons -->
-      <div class="control-column-left">
-        <button id="upload-btn" class="btn btn-metal" title="Load Image from Files">
-          <span class="btn-cap">📂 LOAD</span>
-        </button>
-        <button id="camera-btn" class="btn btn-metal" title="Capture from Camera">
-          <span class="btn-cap">📸 CAM</span>
-        </button>
-      </div>
+      <!-- Left: Load Button -->
+      <button id="upload-btn" class="btn btn-metal" title="Load Image from Files">
+        <span class="btn-cap">📂 LOAD</span>
+      </button>
 
-      <!-- Large Glossy Shutter Trigger Button (Center) -->
+      <!-- Center: Shutter trigger serving as Refresh -->
       <div class="control-column-center">
         <div class="shutter-bezel">
-          <button id="shutter-trigger" class="btn btn-shutter" title="Upload / Capture Shutter Button" onclick="document.getElementById('file-input').click()">
+          <button id="shutter-trigger" class="btn btn-shutter" title="Refresh/Reload Camera">
             <span class="shutter-glow"></span>
           </button>
         </div>
-        <span class="shutter-label">SHUTTER</span>
+        <span class="shutter-label">REFRESH</span>
       </div>
 
-      <!-- Right utility buttons -->
-      <div class="control-column-right">
-        <button id="download-png" class="btn btn-metal" title="Save Rendered Image" disabled>
-          <span class="btn-cap">💾 SAVE</span>
-        </button>
-        <button id="reset-btn" class="btn btn-metal" title="Reset Frame Alignment">
-          <span class="btn-cap">🔄 RESET</span>
-        </button>
-      </div>
+      <!-- Right: Save Button -->
+      <button id="download-png" class="btn btn-metal" title="Save Rendered Image" disabled>
+        <span class="btn-cap">💾 SAVE</span>
+      </button>
 
-      <!-- Hidden file inputs -->
+      <!-- Hidden file input -->
       <input type="file" id="file-input" accept="image/*" class="hidden" style="display:none;">
-      <input type="file" id="camera-input" accept="image/*" capture="environment" class="hidden" style="display:none;">
     </footer>
 
   </main>

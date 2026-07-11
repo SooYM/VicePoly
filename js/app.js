@@ -50,18 +50,14 @@ const App = {
     const el = this.elements;
     el.dropZone = document.getElementById('drop-zone');
     el.fileInput = document.getElementById('file-input');
-    el.cameraInput = document.getElementById('camera-input');
     
-    // Physical Camera Buttons
+    // 3-button physical controls
     el.uploadBtn = document.getElementById('upload-btn');
-    el.cameraBtn = document.getElementById('camera-btn');
     el.shutterTrigger = document.getElementById('shutter-trigger');
     el.downloadPng = document.getElementById('download-png');
-    el.resetBtn = document.getElementById('reset-btn');
     
     // Indicators
     el.ledReady = document.getElementById('led-ready');
-    el.lcdTimestamp = document.getElementById('lcd-timestamp');
     
     el.outputCanvas = document.getElementById('output-canvas');
     el.canvasWrapper = document.getElementById('canvas-wrapper');
@@ -72,57 +68,33 @@ const App = {
   bindEvents: function() {
     const el = this.elements;
 
-    // File loading triggers
+    // Load file stream
     el.uploadBtn.addEventListener('click', () => el.fileInput.click());
-    el.shutterTrigger.addEventListener('click', () => {
-      // If no image is loaded, shutter clicks to open file selector
-      if (!this.state.originalImage) {
-        el.fileInput.click();
-      } else {
-        // If image is loaded, shutter clicks to trigger saving the render!
-        this.downloadPNG();
-      }
-    });
 
-    el.cameraBtn.addEventListener('click', () => el.cameraInput.click());
+    // Shutter Trigger acts as a Page Refresh (as requested)
+    el.shutterTrigger.addEventListener('click', () => {
+      location.reload();
+    });
 
     el.fileInput.addEventListener('change', (e) => this.handleFileSelect(e));
-    el.cameraInput.addEventListener('change', (e) => this.handleFileSelect(e));
 
-    // Drag and drop
-    el.dropZone.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      el.dropZone.classList.add('dragover');
-    });
-    el.dropZone.addEventListener('dragleave', () => el.dropZone.classList.remove('dragover'));
-    el.dropZone.addEventListener('drop', (e) => {
-      e.preventDefault();
-      el.dropZone.classList.remove('dragover');
-      if (e.dataTransfer.files.length > 0) {
-        this.loadImageFromFile(e.dataTransfer.files[0]);
-      }
-    });
-
-    // Reset button (clears current image and returns to start screen)
-    el.resetBtn.addEventListener('click', () => this.resetCamera());
-
-    // Export button
+    // Save image render
     el.downloadPng.addEventListener('click', () => this.downloadPNG());
   },
 
   initHUD: function() {
-    if (this.elements.lcdTimestamp) {
-      this.elements.lcdTimestamp.textContent = this.getRetroDateString();
+    const casingDate = document.getElementById('casing-date');
+    if (casingDate) {
+      casingDate.textContent = this.getRetroDateString();
     }
   },
 
   getRetroDateString: function() {
-    const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
     const now = new Date();
-    const monthName = months[now.getMonth()];
     const day = String(now.getDate()).padStart(2, '0');
-    // Early 2000s cyber-camera date format
-    return `${monthName}.${day}.2001`;
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    // Early 2000s cyber date token (casing format: DD.MM.01)
+    return `${day}.${month}.01`;
   },
 
   resetCamera: function() {
@@ -186,10 +158,6 @@ const App = {
     reader.readAsDataURL(file);
   },
 
-  loadDefaultImage: function() {
-    this.resetCamera();
-  },
-
   showLoading: function(show) {
     if (show) {
       this.elements.loadingOverlay.classList.remove('hidden');
@@ -206,7 +174,6 @@ const App = {
     this.showLoading(true);
 
     setTimeout(() => {
-      // Optimal texture processing resolution (emulates low console frame buffers)
       const maxDimension = 900;
       let w = img.naturalWidth;
       let h = img.naturalHeight;
