@@ -6,18 +6,10 @@ const App = {
     originalImage: null,
     width: 0,
     height: 0,
-    activePreset: 'survival',
-    poly: 16,       // Block Size (8px to 36px)
-    light: 65,      // 3D Shadow bevel intensity (0% to 100%)
-    noise: 50       // Gamma/Brightness level (10% to 100%)
-  },
-
-  // Biome Preset Defaults
-  presets: {
-    'survival': { poly: 16, light: 65, noise: 50 },
-    'nether': { poly: 18, light: 80, noise: 40 },
-    'creative': { poly: 20, light: 55, noise: 60 },
-    'flat-pixel': { poly: 12, light: 0, noise: 50 }
+    activePreset: 'flat-pixel',
+    poly: 12,       // Block Size (12px)
+    light: 0,       // 3D Shadow bevel intensity (0%)
+    noise: 50       // Gamma/Brightness level (50%)
   },
 
   // DOM Elements
@@ -49,16 +41,6 @@ const App = {
     el.loadingOverlay = document.getElementById('loading-overlay');
     el.screenDisplay = document.getElementById('screen-display');
 
-    // Art Direction HUD Elements
-    el.settingsPanel = document.getElementById('settings-panel');
-    el.sliderPoly = document.getElementById('slider-poly');
-    el.sliderLight = document.getElementById('slider-light');
-    el.sliderNoise = document.getElementById('slider-noise');
-    el.presetBtns = document.querySelectorAll('.btn-preset');
-    el.valPoly = document.getElementById('val-poly');
-    el.valLight = document.getElementById('val-light');
-    el.valNoise = document.getElementById('val-noise');
-
     // PWA elements
     el.pwaPrompt = document.getElementById('pwa-prompt');
     el.pwaPromptText = document.getElementById('pwa-prompt-text');
@@ -83,58 +65,6 @@ const App = {
 
     // Save image render
     el.downloadPng.addEventListener('click', () => this.downloadPNG());
-
-    // Sliders Real-time input listeners
-    el.sliderPoly.addEventListener('input', (e) => {
-      const val = parseInt(e.target.value);
-      this.state.poly = val;
-      el.valPoly.textContent = val + 'px';
-      this.processImage();
-    });
-
-    el.sliderLight.addEventListener('input', (e) => {
-      const val = parseInt(e.target.value);
-      this.state.light = val;
-      el.valLight.textContent = val + '%';
-      this.processImage();
-    });
-
-    el.sliderNoise.addEventListener('input', (e) => {
-      const val = parseInt(e.target.value);
-      this.state.noise = val;
-      el.valNoise.textContent = val + '%';
-      this.processImage();
-    });
-
-    // Preset Button Click Handlers
-    el.presetBtns.forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        el.presetBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-
-        const presetName = btn.getAttribute('data-preset');
-        this.state.activePreset = presetName;
-
-        const config = this.presets[presetName];
-        if (config) {
-          this.state.poly = config.poly;
-          this.state.light = config.light;
-          this.state.noise = config.noise;
-
-          // Sync inputs
-          el.sliderPoly.value = config.poly;
-          el.sliderLight.value = config.light;
-          el.sliderNoise.value = config.noise;
-
-          // Sync labels
-          el.valPoly.textContent = config.poly + 'px';
-          el.valLight.textContent = config.light + '%';
-          el.valNoise.textContent = config.noise + '%';
-
-          this.processImage();
-        }
-      });
-    });
 
     // PWA close handler
     if (el.pwaCloseBtn) {
@@ -168,7 +98,7 @@ const App = {
     const el = this.elements;
     if (!el.pwaPrompt) return;
 
-    // 0. Detect mobile vs desktop. Touch support check makes sure mobile devices are never false-negatived.
+    // Detect mobile vs desktop.
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
                       (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) ||
                       ('ontouchstart' in window) ||
@@ -181,29 +111,24 @@ const App = {
       return;
     }
 
-    // 1. Verify display mode: if running full-screen, do not show PWA installation warnings
     const isStandalone = window.navigator.standalone || 
                          window.matchMedia('(display-mode: standalone)').matches;
     if (isStandalone) {
       return;
     }
 
-    // 2. Check if user already dismissed this alert previously
     if (localStorage.getItem('pwa-dismissed')) {
       return;
     }
 
-    // 3. Detect iOS Safari
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
                   (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
     if (isIOS) {
-      // iOS cannot trigger installation programmatically. Show Safari Share instructions
       el.pwaPromptText.innerHTML = "To run this camera full-screen, tap the Share icon 📤 and select 'Add to Home Screen'!";
       el.pwaInstallBtn.style.display = 'none';
       el.pwaPrompt.style.display = 'flex';
     } else {
-      // Android / Desktop Chrome - capture beforeinstallprompt
       let deferredPrompt;
       window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
@@ -248,7 +173,6 @@ const App = {
     this.elements.canvasWrapper.classList.add('hidden');
     this.elements.downloadPng.setAttribute('disabled', 'true');
     this.elements.ledReady.classList.remove('glowing');
-    this.elements.settingsPanel.style.display = 'none';
     if (this.elements.screenDisplay) {
       this.elements.screenDisplay.classList.remove('camera-active');
     }
@@ -341,7 +265,6 @@ const App = {
         this.elements.canvasWrapper.style.display = 'flex';
       }
       this.elements.downloadPng.removeAttribute('disabled');
-      this.elements.settingsPanel.style.display = 'flex';
       
       // Turn on green "READY" status light
       this.elements.ledReady.classList.add('glowing');
@@ -374,7 +297,6 @@ const App = {
 
     this.showLoading(true);
 
-    // Debounce slightly to make slider tracking feel fluid and fast
     if (this.processTimeout) {
       clearTimeout(this.processTimeout);
     }
@@ -401,7 +323,7 @@ const App = {
       canvas.width = w;
       canvas.height = h;
 
-      // Run the 6th-Gen Console emulation pipeline with live Art Direction parameters
+      // Run block-art mapping with default flat pixel configurations
       Filters.apply6thGenPipeline(
         img, 
         canvas, 
@@ -414,18 +336,7 @@ const App = {
       if (this.elements.outputImage) {
         this.elements.outputImage.src = canvas.toDataURL('image/png');
         this.elements.outputImage.style.display = 'block';
-        
-        // Apply Minecraft-style CSS filters
-        if (this.state.activePreset === 'nether') {
-          this.elements.outputImage.style.filter = 'saturate(1.25) contrast(1.2) brightness(0.9) drop-shadow(0 0 4px rgba(255, 60, 0, 0.25))';
-        } else if (this.state.activePreset === 'creative') {
-          this.elements.outputImage.style.filter = 'contrast(1.08) saturate(1.1) brightness(1.04)';
-        } else if (this.state.activePreset === 'flat-pixel') {
-          this.elements.outputImage.style.filter = 'contrast(1.1) saturate(0.95)';
-        } else {
-          // survival
-          this.elements.outputImage.style.filter = 'saturate(1.05) contrast(1.05)';
-        }
+        this.elements.outputImage.style.filter = 'contrast(1.1) saturate(0.95)';
       }
 
       this.showLoading(false);
@@ -438,7 +349,7 @@ const App = {
     if (!img || !img.src) return;
 
     const link = document.createElement('a');
-    link.download = `vicepoly_${this.state.activePreset}_${Date.now()}.png`;
+    link.download = `pixelart_${Date.now()}.png`;
     link.href = img.src;
     document.body.appendChild(link);
     link.click();
