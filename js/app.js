@@ -70,6 +70,8 @@ const App = {
     el.pwaPromptText = document.getElementById('pwa-prompt-text');
     el.pwaInstallBtn = document.getElementById('pwa-install-btn');
     el.pwaCloseBtn = document.getElementById('pwa-close-btn');
+    el.desktopPrompt = document.getElementById('desktop-prompt');
+    el.desktopCloseBtn = document.getElementById('desktop-close-btn');
   },
 
   bindEvents: function() {
@@ -95,6 +97,13 @@ const App = {
         localStorage.setItem('pwa-dismissed', 'true');
       });
     }
+
+    // Desktop close handler
+    if (el.desktopCloseBtn) {
+      el.desktopCloseBtn.addEventListener('click', () => {
+        el.desktopPrompt.classList.add('hidden');
+      });
+    }
   },
 
   initHUD: function() {
@@ -112,6 +121,17 @@ const App = {
   initPwaPrompt: function() {
     const el = this.elements;
     if (!el.pwaPrompt) return;
+
+    // 0. Detect mobile vs desktop. If desktop, show QR prompt and skip PWA installation checks
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+                      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+    if (!isMobile) {
+      if (el.desktopPrompt) {
+        el.desktopPrompt.classList.remove('hidden');
+      }
+      return;
+    }
 
     // 1. Verify display mode: if running full-screen, do not show PWA installation warnings
     const isStandalone = window.navigator.standalone || 

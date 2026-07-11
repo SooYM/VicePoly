@@ -93,6 +93,21 @@
           </div>
         </div>
 
+        <!-- Desktop Casing Overlay Prompt (Hardware Warning & QR) -->
+        <div id="desktop-prompt" class="pwa-prompt hidden">
+          <div class="pwa-prompt-content">
+            <span class="pwa-prompt-icon">⚠️</span>
+            <h4 class="pwa-prompt-title">HARDWARE WARNING</h4>
+            <p id="desktop-prompt-text">VicePoly is a mobile handheld camera. Scan to switch to your phone!</p>
+            <div style="background: #fff; padding: 4px; border-radius: 6px; display: inline-block; box-shadow: var(--lcd-hud-glow); border: 2px solid var(--lcd-hud-color); margin-bottom: 4px;">
+              <img src="https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=https://SooYM.github.io/VicePoly/" alt="QR Code" style="width: 110px; height: 110px; display: block; image-rendering: pixelated;">
+            </div>
+            <div class="pwa-prompt-actions">
+              <button id="desktop-close-btn" class="btn-metal-alt">CONTINUE</button>
+            </div>
+          </div>
+        </div>
+
         <!-- File Drop & Select Zone (Visible when no image is loaded) -->
         <div id="drop-zone" class="drop-zone">
           <div class="camera-lens-graphic">

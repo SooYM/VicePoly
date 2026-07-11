@@ -5,7 +5,11 @@ VicePoly is a zero-configuration, single-page web application that converts phot
 
 *Inspired by the iconic, low-poly, warm-sunset 3D graphics style of GTA Vice City.*
 
-The entire application runs **100% in the frontend** using HTML5 Canvas, Vanilla CSS, and JavaScript. It is heavily optimized for mobile devices and ready to deploy directly to GitHub Pages.
+### 🔒 100% Local & Private
+**Your images never leave your device.** The entire triangulation, lighting, and filtering pipeline runs locally in your web browser (using your device's CPU/GPU). There is no backend server, and no image data is ever uploaded, stored, or processed externally.
+
+### 📱 Mobile Experience & Desktop Prompt
+VicePoly is built to represent a physical handheld toy camera. If accessed via a desktop computer or laptop, the viewfinder screen will display a warning dialog containing a dynamic QR code. Scanning this code lets you instantly open the app on your mobile phone to experience the simulator correctly.
 
 ---
 
