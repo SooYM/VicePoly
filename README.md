@@ -1,7 +1,7 @@
 # BitCam 📸
 > **A Skeuomorphic Retro Camera & Voxel Art Generator**
 
-BitCam is a zero-configuration, single-page progressive web application (PWA) that transforms your photos into textured voxel block mosaics and nostalgic pixel art.
+BitCam is a zero-configuration, single-page progressive web application (PWA) that transforms your photos — or your **live camera feed** — into textured voxel block mosaics and nostalgic pixel art in real-time.
 
 *Inspired by the blocky, retro aesthetic of classic voxel sandboxes.*
 
@@ -13,10 +13,23 @@ BitCam is styled to represent a physical handheld toy camera. If accessed via a 
 
 ---
 
+## 📷 Live Camera Mode
+
+BitCam supports real-time pixel art rendering from your device's rear camera:
+
+- **Tap 📷 CAM** to start the live camera feed — the viewfinder applies the active pixel art filter (16 BIT or 8 BIT) to every frame in real-time.
+- **Tap the Shutter button** to freeze the current frame as a snapshot for saving or sharing.
+- **Tap the Shutter again** to resume the live feed.
+- **Tap ✕ EXIT** to stop the camera and return to the photo upload screen.
+
+Live mode renders at 480px max resolution for smooth ~15-20 FPS performance on most mobile devices.
+
+---
+
 ## 🎨 2000s Skeuomorphic UI Design
 Rather than a modern flat interface, the app is styled as an interactive physical digital toy camera gadget:
 - **Device Casing**: Styled with brushed-metal chassis gradients, inner beveled highlights, and a translucent atomic-cyan grip strip.
-- **Physical Utility Keys**: 3D beveled metallic buttons for **LOAD**, **REFRESH**, and **SAVE** that displace vertically when clicked.
+- **Physical Utility Keys**: 3D beveled metallic buttons for **📷 CAM**, **REFRESH / CAPTURE**, and **💾 SAVE** that displace vertically when clicked.
 - **Glowing LED Indicators**: Tactile lights indicating device power and calculation state. The "READY" LED glows bright green when the pixel art has compiled.
 - **Viewfinder HUD Overlays**: Monospaced green LCD indicators printing the battery capacity `[▰▰▰] 100%`, active camera mode `● ACTIVE`, a retro calendar timestamp, and photo quality (`HQ 16b`).
 - **Style Selector HUD**: A clean, bottom-centered glassmorphism menu toggle that swaps rendering modes between **16 BIT** and **8 BIT**.
@@ -25,10 +38,10 @@ Rather than a modern flat interface, the app is styled as an interactive physica
 
 ## ⚙️ How the Block Art Engine Works
 
-BitCam processes the loaded image in real-time through a client-side voxelization pipeline:
+BitCam processes the loaded image (or live camera frame) in real-time through a client-side voxelization pipeline:
 
 ### 1. Grid Partitioning & Color Averaging
-*   The original image is downscaled to fit the camera viewfinder, then divided into discrete grid cell blocks of size `12px`.
+*   The source is downscaled to fit the camera viewfinder, then divided into discrete grid cell blocks of size `12px`.
 *   The engine calculates the average RGB color of the pixels inside each cell bounds to determine the primary tone.
 
 ### 2. Dual Pixelation Styles
@@ -50,7 +63,7 @@ The project has zero build chains, package managers, or bundlers:
 - `index.html` - The structural shell of the skeuomorphic camera body, LCD HUD, and shutter controls.
 - `css/style.css` - Custom styling tokens for brushed metal gradients, HUD text, and mobile viewport layouts.
 - `js/filters.js` - Procedurally compiles block textures, maps colors, and applies 8-bit quantization.
-- `js/app.js` - Orchestrates file streams, camera inputs, drawing sequences, and PNG exports.
+- `js/app.js` - Orchestrates file streams, live camera feeds, drawing sequences, and PNG exports.
 
 ---
 
