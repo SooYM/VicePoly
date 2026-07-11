@@ -110,20 +110,15 @@
 
         <!-- File Drop & Select Zone (Visible when no image is loaded) -->
         <div id="drop-zone" class="drop-zone">
-          <div class="camera-lens-graphic">
-            <div class="lens-reflection"></div>
-          </div>
-          <h3>LOAD RETRO CAM</h3>
-          
-          <div class="upload-buttons">
-            <button id="upload-btn-fallback" class="btn btn-shutter-alt" onclick="document.getElementById('file-input').click()">📂 SELECT IMAGE</button>
-          </div>
+          <div class="no-photo-message">NO PHOTO LOADED</div>
         </div>
 
         <!-- Live Viewport Canvas Wrapper -->
         <div id="canvas-wrapper" class="canvas-wrapper hidden">
-          <!-- Processed Low Poly Canvas -->
-          <canvas id="output-canvas"></canvas>
+          <!-- Processed Low Poly Canvas (hidden offscreen) -->
+          <canvas id="output-canvas" style="display: none;"></canvas>
+          <!-- Interactive Image Overlay for mobile long-press save/share -->
+          <img id="output-image" class="output-image" alt="Rendered VicePoly Output" style="display: none;">
         </div>
       </div>
     </section>

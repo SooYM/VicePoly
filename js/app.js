@@ -61,6 +61,7 @@ const App = {
     el.ledReady = document.getElementById('led-ready');
     
     el.outputCanvas = document.getElementById('output-canvas');
+    el.outputImage = document.getElementById('output-image');
     el.canvasWrapper = document.getElementById('canvas-wrapper');
     el.loadingOverlay = document.getElementById('loading-overlay');
     el.screenDisplay = document.getElementById('screen-display');
@@ -212,6 +213,12 @@ const App = {
     const canvas = this.elements.outputCanvas;
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Clear output image
+    if (this.elements.outputImage) {
+      this.elements.outputImage.src = '';
+      this.elements.outputImage.style.display = 'none';
+    }
   },
 
   // Image File Handling
@@ -471,6 +478,12 @@ const App = {
 
     // Apply post process PS2 TV filters (scanlines, grain, volumetric fog, color depth)
     Filters.applyPS2Pipeline(ctx, w, h);
+
+    // Export canvas buffer as real image element to allow iOS native save/long-press
+    if (this.elements.outputImage) {
+      this.elements.outputImage.src = canvas.toDataURL('image/png');
+      this.elements.outputImage.style.display = 'block';
+    }
   },
 
   // Export & Download Capabilities
