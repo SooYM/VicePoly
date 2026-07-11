@@ -44,6 +44,7 @@ const App = {
     this.cacheElements();
     this.bindEvents();
     this.initHUD();
+    this.initPwaPrompt();
   },
 
   cacheElements: function() {
@@ -63,6 +64,12 @@ const App = {
     el.canvasWrapper = document.getElementById('canvas-wrapper');
     el.loadingOverlay = document.getElementById('loading-overlay');
     el.screenDisplay = document.getElementById('screen-display');
+
+    // PWA elements
+    el.pwaPrompt = document.getElementById('pwa-prompt');
+    el.pwaPromptText = document.getElementById('pwa-prompt-text');
+    el.pwaInstallBtn = document.getElementById('pwa-install-btn');
+    el.pwaCloseBtn = document.getElementById('pwa-close-btn');
   },
 
   bindEvents: function() {
@@ -80,12 +87,79 @@ const App = {
 
     // Save image render
     el.downloadPng.addEventListener('click', () => this.downloadPNG());
+
+    // PWA close handler
+    if (el.pwaCloseBtn) {
+      el.pwaCloseBtn.addEventListener('click', () => {
+        el.pwaPrompt.classList.add('hidden');
+        localStorage.setItem('pwa-dismissed', 'true');
+      });
+    }
   },
 
   initHUD: function() {
     const casingDate = document.getElementById('casing-date');
     if (casingDate) {
       casingDate.textContent = this.getRetroDateString();
+    }
+  },
+
+  /**
+   * Initializes the PWA Install Prompt Banner overlay inside the LCD screen.
+   * Auto-detects standalone mode, checks browser type (iOS Safari vs. Android Chrome),
+   * and handles local storage dismissal to avoid intrusive popups.
+   */
+  initPwaPrompt: function() {
+    const el = this.elements;
+    if (!el.pwaPrompt) return;
+
+    // 1. Verify display mode: if running full-screen, do not show PWA installation warnings
+    const isStandalone = window.navigator.standalone || 
+                         window.matchMedia('(display-mode: standalone)').matches;
+    if (isStandalone) {
+      return;
+    }
+
+    // 2. Check if user already dismissed this alert previously
+    if (localStorage.getItem('pwa-dismissed')) {
+      return;
+    }
+
+    // 3. Detect iOS Safari
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+                  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+    if (isIOS) {
+      // iOS cannot trigger installation programmatically. Show Safari Share instructions
+      el.pwaPromptText.innerHTML = "To run this camera full-screen, tap the Share icon 📤 and select 'Add to Home Screen'!";
+      el.pwaInstallBtn.classList.add('hidden');
+      el.pwaPrompt.classList.remove('hidden');
+    } else {
+      // Android / Desktop Chrome - capture beforeinstallprompt
+      let deferredPrompt;
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        
+        if (!localStorage.getItem('pwa-dismissed')) {
+          el.pwaPromptText.textContent = "Install VicePoly on your home screen for full-screen camera mode!";
+          el.pwaInstallBtn.classList.remove('hidden');
+          el.pwaPrompt.classList.remove('hidden');
+        }
+      });
+
+      el.pwaInstallBtn.addEventListener('click', () => {
+        if (deferredPrompt) {
+          deferredPrompt.prompt();
+          deferredPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+              console.log('PWA installation accepted by user.');
+            }
+            deferredPrompt = null;
+            el.pwaPrompt.classList.add('hidden');
+          });
+        }
+      });
     }
   },
 

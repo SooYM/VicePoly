@@ -589,3 +589,78 @@ body {
     margin-bottom: 12px;
   }
 }
+
+/* PWA Install Alert Overlay */
+.pwa-prompt {
+  position: absolute;
+  inset: 12px;
+  background: rgba(13, 26, 24, 0.95);
+  border: 2px solid var(--lcd-hud-color);
+  border-radius: 8px;
+  box-shadow: var(--lcd-hud-glow);
+  z-index: 45;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  text-align: center;
+  animation: fadeIn 0.3s ease;
+}
+
+.pwa-prompt.hidden {
+  display: none !important;
+}
+
+.pwa-prompt-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.pwa-prompt-icon {
+  font-size: 24px;
+  animation: pulse 1.2s infinite;
+}
+
+.pwa-prompt-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  color: var(--lcd-hud-color);
+  text-shadow: var(--lcd-hud-glow);
+  letter-spacing: 1px;
+}
+
+#pwa-prompt-text {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 13px;
+  color: var(--lcd-hud-color);
+  text-shadow: var(--lcd-hud-glow);
+  line-height: 1.4;
+  margin: 4px 0 8px 0;
+}
+
+.pwa-prompt-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.btn-metal-alt {
+  background: linear-gradient(180deg, #f2f2f2 0%, #b8b8b8 45%, #8c8c8c 80%, #6e6e6e 100%);
+  border: 1.5px solid #5a5f56;
+  border-radius: 4px;
+  color: #1e1e1e;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 6px 12px;
+  cursor: pointer;
+  box-shadow: 1px 1px 0 #fff;
+}
+
+.btn-metal-alt:active {
+  transform: scale(0.96);
+  box-shadow: inset 1px 1px 2px rgba(0,0,0,0.5);
+}
+

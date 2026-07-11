@@ -3,6 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  
+  <!-- Apple Standalone App Capabilites -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="VicePoly">
+  <link rel="apple-touch-icon" href="icon-192.png">
+
+  <!-- PWA Manifest Link -->
+  <link rel="manifest" href="manifest.json">
+
   <title>VicePoly | Retro 3D Graphics Camera</title>
   
   <!-- SEO Meta Tags -->
@@ -30,7 +40,7 @@
       
       <!-- Physical casing LCD window showing battery and date -->
       <div class="camera-sub-lcd">
-        <span class="sub-lcd-item date-casing">11.07.01</span>
+        <span class="sub-lcd-item date-casing" id="casing-date">11.07.01</span>
         <span class="sub-lcd-item battery-casing">▰▰▰</span>
       </div>
 
@@ -68,6 +78,19 @@
 
         <div class="lcd-hud lcd-hud-bottom">
           <span class="hud-item quality-label">HQ 24b</span>
+        </div>
+
+        <!-- PWA Casing Overlay Prompt (System Install Alert) -->
+        <div id="pwa-prompt" class="pwa-prompt hidden">
+          <div class="pwa-prompt-content">
+            <span class="pwa-prompt-icon">⚙️</span>
+            <h4 class="pwa-prompt-title">SYSTEM UPDATE</h4>
+            <p id="pwa-prompt-text">Install this web app to run full-screen without address bars!</p>
+            <div class="pwa-prompt-actions">
+              <button id="pwa-install-btn" class="btn-shutter-alt hidden">INSTALL</button>
+              <button id="pwa-close-btn" class="btn-metal-alt">DISMISS</button>
+            </div>
+          </div>
         </div>
 
         <!-- File Drop & Select Zone (Visible when no image is loaded) -->
@@ -129,5 +152,16 @@
   <script src="js/delaunay.js"></script>
   <script src="js/filters.js"></script>
   <script src="js/app.js"></script>
+
+  <!-- Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(reg => console.log('Service Worker registration successful:', reg.scope))
+          .catch(err => console.error('Service Worker registration failed:', err));
+      });
+    }
+  </script>
 </body>
 </html>
