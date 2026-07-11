@@ -303,6 +303,6 @@ const Filters = {
       }
     }
     
-    console.log("[VicePoly Engine] Minecraft pixel blocks rendering complete.");
+    console.log("[CraftCam Engine] Minecraft pixel blocks rendering complete.");
   }
 };

@@ -1,6 +1,6 @@
 {
-  "name": "VicePoly Retro Camera",
-  "short_name": "VicePoly",
+  "name": "CraftCam Retro Camera",
+  "short_name": "CraftCam",
   "start_url": "index.html",
   "display": "standalone",
   "background_color": "#15151e",

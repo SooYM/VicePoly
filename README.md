@@ -1,49 +1,46 @@
-# VicePoly 📸
-> **A Skeuomorphic 2000s Cyber-Camera & Retro 3D Graphics Generator**
+# CraftCam 📸
+> **A Skeuomorphic Retro Camera & Minecraft-Style Voxel Art Generator**
 
-VicePoly is a zero-configuration, single-page web application that converts photos into the classic 3D graphics style of early 2000s consoles (reminiscent of low-poly rendering from the PlayStation 1 and PlayStation 2 era).
+CraftCam is a zero-configuration, single-page progressive web application (PWA) that transforms your photos into textured Minecraft-style block mosaics and nostalgic pixel art.
 
-*Inspired by the iconic, low-poly, warm-sunset 3D graphics style of GTA Vice City.*
+*Inspired by the blocky, retro aesthetic of classic voxel sandboxes.*
 
 ### 🔒 100% Local & Private
-**Your images never leave your device.** The entire triangulation, lighting, and filtering pipeline runs locally in your web browser (using your device's CPU/GPU). There is no backend server, and no image data is ever uploaded, stored, or processed externally.
+**Your images never leave your device.** The entire pixelation, block mapping, and color quantization pipeline runs locally in your web browser (using client-side canvas pixels). There is no backend server, and no image data is ever uploaded, stored, or processed externally.
 
 ### 📱 Mobile Experience & Desktop Prompt
-VicePoly is built to represent a physical handheld toy camera. If accessed via a desktop computer or laptop, the viewfinder screen will display a warning dialog containing a dynamic QR code. Scanning this code lets you instantly open the app on your mobile phone to experience the simulator correctly.
+CraftCam is styled to represent a physical handheld toy camera. If accessed via a desktop computer or laptop, the viewfinder screen will display a warning dialog containing a dynamic QR code. Scanning this code lets you instantly open the app on your mobile phone to experience the simulator correctly.
 
 ---
 
 ## 🎨 2000s Skeuomorphic UI Design
-Rather than a modern flat interface, the app is styled as an interactive physical cyber-camera gadget:
+Rather than a modern flat interface, the app is styled as an interactive physical digital toy camera gadget:
 - **Device Casing**: Styled with brushed-metal chassis gradients, inner beveled highlights, and a translucent atomic-cyan grip strip.
-- **Glossy Shutter Button**: A large red gel shutter trigger (reminiscent of the Aqua interface of early Mac OS X or Winamp player skins). Clicking the shutter takes a photo or loads an image, and saves the final render once loaded.
-- **Physical Utility Keys**: 3D beveled metallic buttons for **LOAD**, **CAM**, **SAVE**, and **RESET** that displace vertically when clicked.
-- **Glowing LED Indicators**: Tactile lights indicating device power and calculation state. The "READY" LED glows bright green when the mesh has compiled.
-- **Viewfinder HUD Overlays**: Monospaced green LCD indicators printing the battery capacity `[▰▰▰] 100%`, active camera mode `● 3D-CAM`, a retro calendar timestamp (`JUL.11.2001`), and photo quality (`HQ 24b`).
+- **Physical Utility Keys**: 3D beveled metallic buttons for **LOAD**, **REFRESH**, and **SAVE** that displace vertically when clicked.
+- **Glowing LED Indicators**: Tactile lights indicating device power and calculation state. The "READY" LED glows bright green when the pixel art has compiled.
+- **Viewfinder HUD Overlays**: Monospaced green LCD indicators printing the battery capacity `[▰▰▰] 100%`, active camera mode `● ACTIVE`, a retro calendar timestamp, and photo quality (`HQ 24b`).
+- **Style Selector HUD**: A clean, bottom-centered glassmorphism menu toggle that swaps rendering modes between **24 BIT** and **8 BIT**.
 
 ---
 
-## ⚙️ How the 3D Rendering Engine Works
+## ⚙️ How the Block Art Engine Works
 
-VicePoly departs from generic 2D Delaunay filters by replicating the early 3D rendering pipeline constraints:
+CraftCam processes the loaded image in real-time through a client-side voxelization pipeline:
 
-### 1. Silhouette Contour Alignment (Anti-Webbing)
-Standard low-poly filters tile the entire image space, stretching triangles across object silhouettes (creating ugly webbing between a subject's head and the sky). VicePoly solves this by:
-- Tracing major object boundaries (highest 5% gradients using Sobel operators).
-- Placing coordinates at a high density (every 10px) strictly along these outlines.
-- Placing points in uniform/flat regions (sky, roads) very sparsely (every 50px).
-- **Result**: The low-poly mesh contours snap tightly to the subject, creating clean silhouettes that look like actual 3D models standing in front of backgrounds.
+### 1. Grid Partitioning & Color Averaging
+*   The original image is downscaled to fit the camera viewfinder, then divided into discrete grid cell blocks of size `12px`.
+*   The engine calculates the average RGB color of the pixels inside each cell bounds to determine the primary tone.
 
-### 2. Retro Texture Mapping
-- **VRAM Size Textures**: The original photo is downscaled and scaled back up using nearest-neighbor stretching (`imageSmoothingEnabled = false`) to simulate the memory limits of early consoles ($256 \times 256$ texture maps).
-- **PS1 Coordinate Jitter**: Emulates the signature coordinate drift/vibration of early hardware by adding a random pixel offset (wobble) to the mapping texture coordinate per triangle.
-- **Pseudo-3D Shading (Lambertian Model)**: Vertex heights are calculated from image luminance gradients ($Z = \text{Luminance} \times 0.35$). The engine computes surface normals ($\vec{n}$) and checks them against a directional light source ($\vec{L}$) pointing from the top-left-front. Polygons facing the sun get highlights (white overlays) while facing away get shadows (ambient occlusion black overlays).
+### 2. Dual Pixelation Styles
 
-### 3. Atmospheric Post-Processing
-- **Volumetric Fog**: A hazy linear overlay blends the bottom half of the mesh, simulating console draw-distance masking.
-- **TV CRT Scanlines**: Alternating horizontal scanline beams run across the viewfinder screen.
-- **Analog Film Grain**: High-frequency grit is added directly to the final pixels to prevent modern anti-aliasing smoothness and give a retro, cinematic TV glow.
-- **16-bit Color Quantization**: Clamps colors to a 4096-color space to match early console lookup tables.
+#### 👾 24 BIT Mode (Smooth Flat Pixel Art)
+*   Standard color-pixelation block rendering.
+*   Draws clean, solid flat-color blocks for a smooth, high-fidelity 24-bit retro pixel art look.
+
+#### 🧱 8 BIT Mode (Procedural Minecraft Block Art)
+*   **Procedural Block Texture Compiler**: Generates authentic 16x16 pixel textures dynamically on startup with zero network dependencies (includes *Stone, Grass, Dirt, Leaves, Water, Sand, Wood, and Obsidian*).
+*   **Euclidean Color-Proximity Check**: Compares the cell's average color to the target blocks' color profiles in 3D color space, mapping each cell to the closest matching Minecraft block texture sheet.
+*   **8-Bit RGB Color Quantization**: Clamps the color of the rendered texture sub-pixels into a 3-3-2 bit (8-bit) color depth, yielding exactly 256 colors total for that iconic, crunchy retro MS-DOS / Sega console look.
 
 ---
 
@@ -51,10 +48,8 @@ Standard low-poly filters tile the entire image space, stretching triangles acro
 
 The project has zero build chains, package managers, or bundlers:
 - `index.html` - The structural shell of the skeuomorphic camera body, LCD HUD, and shutter controls.
-- `css/style.css` - Custom styling tokens for brushed metal gradients, gel buttons, HUD text, and mobile scaling.
-- `js/sobel.js` - Computes Sobel gradients and handles edge-locked grid coordinate sampling.
-- `js/delaunay.js` - Triangulates coordinate arrays using the Bowyer-Watson Delaunay algorithm.
-- `js/filters.js` - Applies post-effects: scanlines, film grain, volumetric fog, and 16-bit quantization.
+- `css/style.css` - Custom styling tokens for brushed metal gradients, HUD text, and mobile viewport layouts.
+- `js/filters.js` - Procedurally compiles block textures, maps colors, and applies 8-bit quantization.
 - `js/app.js` - Orchestrates file streams, camera inputs, drawing sequences, and PNG exports.
 
 ---

@@ -149,7 +149,7 @@ const App = {
         deferredPrompt = e;
         
         if (!localStorage.getItem('pwa-dismissed')) {
-          el.pwaPromptText.textContent = "Install VicePoly on your home screen for full-screen camera mode!";
+          el.pwaPromptText.textContent = "Install CraftCam on your home screen for full-screen camera mode!";
           el.pwaInstallBtn.style.display = 'block';
           el.pwaPrompt.style.display = 'flex';
         }
