@@ -93,7 +93,7 @@ const App = {
     // PWA close handler
     if (el.pwaCloseBtn) {
       el.pwaCloseBtn.addEventListener('click', () => {
-        el.pwaPrompt.classList.add('hidden');
+        el.pwaPrompt.style.display = 'none';
         localStorage.setItem('pwa-dismissed', 'true');
       });
     }
@@ -101,7 +101,7 @@ const App = {
     // Desktop close handler
     if (el.desktopCloseBtn) {
       el.desktopCloseBtn.addEventListener('click', () => {
-        el.desktopPrompt.classList.add('hidden');
+        el.desktopPrompt.style.display = 'none';
       });
     }
   },
@@ -122,13 +122,15 @@ const App = {
     const el = this.elements;
     if (!el.pwaPrompt) return;
 
-    // 0. Detect mobile vs desktop. If desktop, show QR prompt and skip PWA installation checks
+    // 0. Detect mobile vs desktop. Touch support check makes sure mobile devices are never false-negatived.
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
-                      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+                      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) ||
+                      ('ontouchstart' in window) ||
+                      (navigator.maxTouchPoints > 0);
 
     if (!isMobile) {
       if (el.desktopPrompt) {
-        el.desktopPrompt.classList.remove('hidden');
+        el.desktopPrompt.style.display = 'flex';
       }
       return;
     }
@@ -152,8 +154,8 @@ const App = {
     if (isIOS) {
       // iOS cannot trigger installation programmatically. Show Safari Share instructions
       el.pwaPromptText.innerHTML = "To run this camera full-screen, tap the Share icon 📤 and select 'Add to Home Screen'!";
-      el.pwaInstallBtn.classList.add('hidden');
-      el.pwaPrompt.classList.remove('hidden');
+      el.pwaInstallBtn.style.display = 'none';
+      el.pwaPrompt.style.display = 'flex';
     } else {
       // Android / Desktop Chrome - capture beforeinstallprompt
       let deferredPrompt;
@@ -163,8 +165,8 @@ const App = {
         
         if (!localStorage.getItem('pwa-dismissed')) {
           el.pwaPromptText.textContent = "Install VicePoly on your home screen for full-screen camera mode!";
-          el.pwaInstallBtn.classList.remove('hidden');
-          el.pwaPrompt.classList.remove('hidden');
+          el.pwaInstallBtn.style.display = 'block';
+          el.pwaPrompt.style.display = 'flex';
         }
       });
 
@@ -176,7 +178,7 @@ const App = {
               console.log('PWA installation accepted by user.');
             }
             deferredPrompt = null;
-            el.pwaPrompt.classList.add('hidden');
+            el.pwaPrompt.style.display = 'none';
           });
         }
       });
